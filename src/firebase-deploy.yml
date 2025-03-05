@@ -1,0 +1,33 @@
+name: Deploy to Firebase
+
+on:
+  push:
+    branches:
+      - main  # Измените на ветку, которую используете для развертывания
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # Укажи свою версию Node.js
+
+      - name: Install dependencies
+        run: |
+          npm install
+          npm install --save-dev firebase-tools
+
+      - name: Firebase login
+        run: firebase login --token ${{ secrets.FIREBASE_AUTH_TOKEN }}
+
+      - name: Build project (если необходимо)
+        run: npm run build
+
+      - name: Deploy to Firebase
+        run: firebase deploy --project YOUR_PROJECT_ID --token ${{ secrets.FIREBASE_AUTH_TOKEN }}
